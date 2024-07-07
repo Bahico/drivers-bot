@@ -34,13 +34,12 @@ async def send_id(message: types.Message) -> None:
 
 @dp.message()
 async def message(message: types.Message) -> None:
-    print(message.chat.type)
     if message.chat.type in ["group", "supergroup"]:
         group = GroupRes()
         if group.search(message.chat.id)['type'] == GroupType.GET_MESSAGE:
             user = UserRes(telegram_id=message.from_user.id)
             if user.data().type == UserType.SIMPLE:
-                await group.send_message(message_id=message.message_id,chat_id=message.chat.id, message=message.text, bot=bot)
+                await group.send_message(message_id=message.message_id,chat_id=message.chat.id, message=message.text, bot=bot, user_id=message.from_user.id)
     else:
         user = UserRes(telegram_id=message.from_user.id)
         data = await simple_message(message, user)

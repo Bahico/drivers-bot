@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from aiogram import Bot
 import requests
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from callback import AdminCallbackType
 from constans import getEndpoint, add_one_hour
@@ -121,9 +122,10 @@ class GroupRes:
             if group['telegram_id'] == chat_id:
                 return group
 
-    async def send_message(self, message_id: int, chat_id: int, message: str, bot: Bot):
+    async def send_message(self, message_id: int, chat_id: int, message: str, bot: Bot, user_id: int):
         await bot.delete_message(message_id=message_id, chat_id=chat_id)
-
+        studyboi = InlineKeyboardButton(text='Open profile', url=f'tg://user?id={user_id}')
+        start_keyboard = InlineKeyboardMarkup(resize_keyboard=True, inline_keyboard=[[studyboi]])
         for group in self.group_list():
             if group['type'] == GroupType.SEND_MESSAGE:
-                await bot.send_message(text=message, chat_id=group['telegram_id'])
+                await bot.send_message(text=message, chat_id=group['telegram_id'], reply_markup=start_keyboard)
