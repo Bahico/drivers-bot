@@ -2,9 +2,9 @@ from aiogram import types
 
 from admin.menu import admin_menu
 from admin.message import admin_message
-from return_value import ReturnValue
-from user import UserRes
-from userType import UserStageEnum, MessageTexts, UserType
+from models.return_value import ReturnValue
+from models.user import UserRes
+from models.userType import UserStageEnum, MessageTexts, UserType
 
 
 async def simple_message(message: types.Message, user: UserRes) -> ReturnValue:

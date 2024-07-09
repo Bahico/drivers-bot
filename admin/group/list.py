@@ -1,9 +1,9 @@
 from callback import AdminCallback, AdminCallbackType
-from group import GroupRes, GroupType
+from models.group import GroupRes, GroupType
 from aiogram import types
 
-from return_value import ReturnValue
-from userType import UserType
+from models.return_value import ReturnValue
+from models.userType import UserType
 
 
 def group_list(callback_type: str, edit_message=False) -> ReturnValue:

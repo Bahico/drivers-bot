@@ -10,18 +10,21 @@ class UserModel:
     telegram_id: int
     type = UserType.SIMPLE
     username: str
+    last_name: str
     new = False
 
-    def __init__(self, telegram_id: int, username: str = None, type: str = None):
+    def __init__(self, telegram_id: int, last_name: str, username: str = None, type: str = None):
         self.telegram_id = telegram_id
         self.username = username
         self.type = type
+        self.last_name = last_name
 
     def user_data(self):
         return {
             "telegram_id": self.telegram_id,
             "username": self.username,
-            "type": self.type
+            "type": self.type,
+            "last_name": self.last_name
         }
 
     def get(self, call):
@@ -89,8 +92,8 @@ class UserRes:
     __data: UserModel
     __stage: UserStage
 
-    def __init__(self, telegram_id: int, username: str = None, type: int = None):
-        self.__data = UserModel(telegram_id, username, type)
+    def __init__(self, telegram_id: int, last_name: str = None, username: str = None, user_type: int = None):
+        self.__data = UserModel(telegram_id, last_name, username, user_type)
         self.__stage = UserStage(telegram_id)
         self.__data.get(self.__stage.change_values)
 

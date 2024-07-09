@@ -7,8 +7,8 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from callback import AdminCallbackType
 from constans import getEndpoint, add_one_hour
-from userType import UserStageEnum
-from user import UserRes
+from models.userType import UserStageEnum
+from models.user import UserRes
 
 
 class GroupType:
@@ -122,8 +122,19 @@ class GroupRes:
             if group['telegram_id'] == chat_id:
                 return group
 
-    async def send_message(self, message_id: int, chat_id: int, message: str, bot: Bot, user_id: int):
+    async def send_message(self, message, bot: Bot):
+        message_id, chat_id, last_name, user_id = message
+
         await bot.delete_message(message_id=message_id, chat_id=chat_id)
+        await bot.send_message(chat_id=chat_id, text=f"""
+            ✅ Xurmatli #{last_name} sizning zakasingiz
+            🚖 Haydovchilar guruhiga tushdi.
+            💬 Lichkangizga ishonchli 🚕 shoferlarimiz aloqaga chiqadi.
+            📞 Murojaat uchun tel: 
+            +998909994921
+            💬 Admin: @bahico0312
+        """)
+
         studyboi = InlineKeyboardButton(text='Open profile', url=f'tg://user?id={user_id}')
         start_keyboard = InlineKeyboardMarkup(resize_keyboard=True, inline_keyboard=[[studyboi]])
         for group in self.group_list():

@@ -2,9 +2,9 @@ from aiogram import types
 
 from admin.group.create import group_name, group_id
 from admin.menu import admin_menu
-from userType import UserStageEnum
-from return_value import ReturnValue
-from user import UserRes
+from models.userType import UserStageEnum
+from models.return_value import ReturnValue
+from models.user import UserRes
 
 
 def admin_message(message: types.Message, user: UserRes) -> ReturnValue:

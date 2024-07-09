@@ -5,8 +5,8 @@ from admin.group.delete import delete_group
 from admin.group.list import group_list
 from admin.menu import admin_menu
 from callback import AdminCallback, AdminCallbackType
-from return_value import ReturnValue
-from user import UserRes
+from models.return_value import ReturnValue
+from models.user import UserRes
 
 
 def admin_callback(query: types.CallbackQuery, callback_data: AdminCallback, user: UserRes) -> ReturnValue:

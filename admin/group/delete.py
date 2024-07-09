@@ -1,7 +1,7 @@
 from admin.group.list import group_list
 from callback import AdminCallbackType
-from group import GroupRes
-from return_value import ReturnValue
+from models.group import GroupRes
+from models.return_value import ReturnValue
 
 
 def delete_group(group_id: str, callback_type: str) -> ReturnValue:

@@ -1,8 +1,8 @@
 from admin.menu import admin_menu
-from group import GroupRes
-from return_value import ReturnValue
-from user import UserRes
-from userType import UserStageEnum
+from models.group import GroupRes
+from models.return_value import ReturnValue
+from models.user import UserRes
+from models.userType import UserStageEnum
 
 
 def group_create(callback_type: str, user: UserRes) -> ReturnValue:

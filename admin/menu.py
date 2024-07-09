@@ -1,8 +1,8 @@
 from aiogram.types import InlineKeyboardButton
 
 from callback import AdminCallback, AdminCallbackType
-from return_value import ReturnValue
-from userType import UserType
+from models.return_value import ReturnValue
+from models.userType import UserType
 
 inline_btn_1 = InlineKeyboardButton(
     text="Habar olish group",
