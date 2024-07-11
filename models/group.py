@@ -3,11 +3,15 @@ import os
 from datetime import datetime
 from aiogram import Bot
 import requests
+from aiogram.enums import ParseMode
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from callback import AdminCallbackType
-from constans import getEndpoint, add_one_hour
-from models.userType import UserStageEnum
+from admin.admin_callback import AdminCallbackType
+from models.constans import getEndpoint, add_one_hour
+from driver.driver_callback import DriverCallback, DriverCallbackType
+from models.message import MessageModel
+from models.send_message import SendMessage
+from models.userType import UserStageEnum, UserType
 from models.user import UserRes
 
 
@@ -123,20 +127,29 @@ class GroupRes:
                 return group
 
     async def send_message(self, message, bot: Bot):
-        message_id, chat_id, last_name, user_id = message
+        MessageModel(message['message_id'], text=message['text'], client=message['user'].data(), create=True)
 
-        await bot.delete_message(message_id=message_id, chat_id=chat_id)
-        await bot.send_message(chat_id=chat_id, text=f"""
-            ✅ Xurmatli #{last_name} sizning zakasingiz
-            🚖 Haydovchilar guruhiga tushdi.
-            💬 Lichkangizga ishonchli 🚕 shoferlarimiz aloqaga chiqadi.
-            📞 Murojaat uchun tel: 
-            +998909994921
-            💬 Admin: @bahico0312
+        await bot.delete_message(message_id=message['message_id'], chat_id=message['chat_id'])
+        await bot.send_message(chat_id=message['chat_id'], text=f"""
+            ✅ Xurmatli #{message['last_name']} sizning zakasingiz\n🚖 Haydovchilar guruhiga tushdi.\n💬 Lichkangizga ishonchli 🚕 shoferlarimiz aloqaga chiqadi.\n📞 Murojaat uchun tel: \n+998909994921\n💬 Admin: @bahico0312
         """)
 
-        studyboi = InlineKeyboardButton(text='Open profile', url=f'tg://user?id={user_id}')
-        start_keyboard = InlineKeyboardMarkup(resize_keyboard=True, inline_keyboard=[[studyboi]])
+        queue = InlineKeyboardButton(
+            text="O'chirid olish",
+            callback_data=DriverCallback(
+                role=UserType.DRIVER,
+                type=DriverCallbackType.TAKE_TURNS,
+                id=message['message_id'].__str__()
+            ).pack()
+        )
+        start_keyboard = InlineKeyboardMarkup(resize_keyboard=True, inline_keyboard=[[queue]])
         for group in self.group_list():
             if group['type'] == GroupType.SEND_MESSAGE:
-                await bot.send_message(text=message, chat_id=group['telegram_id'], reply_markup=start_keyboard)
+                send_message = await bot.send_message(
+                    text=f"Xabar: {message['text']}",
+                    parse_mode=ParseMode.HTML,
+                    chat_id=group['telegram_id'],
+                    reply_markup=start_keyboard
+                )
+
+                SendMessage(chat_id=group['telegram_id'], client_message_id=message['message_id'].__str__(), message_id=send_message.message_id, create=True)

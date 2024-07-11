@@ -1,5 +1,5 @@
 from admin.group.list import group_list
-from callback import AdminCallbackType
+from admin.admin_callback import AdminCallbackType
 from models.group import GroupRes
 from models.return_value import ReturnValue
 

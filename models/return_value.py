@@ -11,9 +11,11 @@ class ReturnValue:
             edit_message: bool = False,
             remove_message: bool = False,
             callback_func=None,
+            chat_id: int = None
     ):
         self.message = message
         self.reply_markup = reply_markup
         self.editMessage = edit_message
         self.remove_message = remove_message
         self.callback_func = callback_func
+        self.chat_id = chat_id

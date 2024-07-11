@@ -1,4 +1,4 @@
-from callback import AdminCallback, AdminCallbackType
+from admin.admin_callback import AdminCallback, AdminCallbackType
 from models.group import GroupRes, GroupType
 from aiogram import types
 

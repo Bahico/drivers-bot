@@ -8,6 +8,7 @@ from models.userType import UserStageEnum, MessageTexts, UserType
 
 
 async def simple_message(message: types.Message, user: UserRes) -> ReturnValue:
+    print(user.data().type)
     if user.data().type == UserType.DRIVER or user.data().type == UserType.SIMPLE:
         if user.stage().step == UserStageEnum.START:
             if message.text == MessageTexts.ADMIN:

@@ -19,5 +19,5 @@ def group_id(id: str, user: UserRes) -> ReturnValue:
     group = GroupRes().create_id(id, user)
     if group:
         user.stage().change_step(UserStageEnum.MENU)
-        return ReturnValue(message="Guruh muvofaqiyatli yaratildi", callback_func=admin_menu)
+        return ReturnValue(message="Guruh muvofaqiyatli yaratildi", callback_func=admin_menu())
     return ReturnValue(message="Iltimos faqat raqam kiriting")

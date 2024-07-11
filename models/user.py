@@ -1,34 +1,36 @@
 import requests
 
-from constans import getEndpoint
-from userType import UserType
+from models.constans import getEndpoint
+from models.userType import UserType
 
 
 class UserModel:
     __resourceUrl__ = getEndpoint('user/')
 
+    id: int
     telegram_id: int
     type = UserType.SIMPLE
     username: str
     last_name: str
     new = False
 
-    def __init__(self, telegram_id: int, last_name: str, username: str = None, type: str = None):
+    def __init__(self, telegram_id: int, last_name: str = None, username: str = None, user_type: str = None, chat_id: int = None):
         self.telegram_id = telegram_id
         self.username = username
-        self.type = type
+        self.type = user_type
         self.last_name = last_name
+        self.chat_id = chat_id
 
     def user_data(self):
         return {
             "telegram_id": self.telegram_id,
             "username": self.username,
             "type": self.type,
-            "last_name": self.last_name
+            "last_name": self.last_name,
+            "chat_id": self.chat_id
         }
 
     def get(self, call):
-        print(self.user_data())
         user = requests.post(f"{self.__resourceUrl__}{self.telegram_id.__str__()}/", json=self.user_data())
         self.change_values(user.json())
         self.check_new(user)
@@ -44,6 +46,8 @@ class UserModel:
     def change_values(self, user: all):
         self.username = user['username']
         self.type = user['type']
+        self.id = user['id']
+        self.chat_id = user['chat_id']
 
     def change_type(self, type: UserType):
         self.type = type
@@ -92,8 +96,8 @@ class UserRes:
     __data: UserModel
     __stage: UserStage
 
-    def __init__(self, telegram_id: int, last_name: str = None, username: str = None, user_type: int = None):
-        self.__data = UserModel(telegram_id, last_name, username, user_type)
+    def __init__(self, telegram_id: int, last_name: str = None, username: str = None, user_type: int = None, chat_id: int = None):
+        self.__data = UserModel(telegram_id, last_name, username, user_type, chat_id=chat_id)
         self.__stage = UserStage(telegram_id)
         self.__data.get(self.__stage.change_values)
 
