@@ -26,22 +26,28 @@ dp = Dispatcher()
 
 @dp.message(CommandStart())
 async def send_id(message: types.Message) -> None:
-    message_id = message.from_user.id
-    username = message.from_user.username
-    user = UserRes(telegram_id=message_id, chat_id=message.chat.id, last_name=message.from_user.first_name, username=username,
-                   user_type=UserType.DRIVER)
-    if user.data().is_new():
-        await message.reply("Siz haydovchilar ro'yxatiga muvofaqiyatli qo'shildingiz")
-    else:
-        await message.reply("Siz haydovchilar ro'yxatida borsiz")
+    if message.chat.type not in ["group", "supergroup"]:
+        message_id = message.from_user.id
+        username = message.from_user.username
+        user = UserRes(
+            telegram_id=message_id,
+            chat_id=message.chat.id,
+            last_name=message.from_user.first_name, username=username,
+            user_type=UserType.DRIVER
+        )
+        if user.data().is_new():
+            await message.reply("Siz haydovchilar ro'yxatiga muvofaqiyatli qo'shildingiz")
+        else:
+            await message.reply("Siz haydovchilar ro'yxatida borsiz")
 
 
 @dp.message()
 async def message(message: types.Message) -> None:
     if message.chat.type in ["group", "supergroup"]:
         group = GroupRes()
-        if group.search(message.chat.id)['type'] == GroupType.GET_MESSAGE:
-            user = UserRes(telegram_id=message.from_user.id, chat_id=message.chat.id, last_name=message.from_user.first_name)
+        group_type = group.search(message.chat.id)
+        if group_type and group_type['type'] == GroupType.GET_MESSAGE:
+            user = UserRes(telegram_id=message.from_user.id, last_name=message.from_user.first_name)
             if user.data().type == UserType.SIMPLE:
                 await group.send_message(message={
                     "message_id": message.message_id,
@@ -52,7 +58,7 @@ async def message(message: types.Message) -> None:
                     "user": user
                 }, bot=bot)
     else:
-        user = UserRes(telegram_id=message.from_user.id, last_name=message.from_user.first_name)
+        user = UserRes(telegram_id=message.from_user.id, last_name=message.from_user.first_name, chat_id=message.chat.id)
         data = await simple_message(message, user)
         await send_message(message.from_user.id, data)
 
@@ -67,8 +73,9 @@ async def my_callback_foo(query: CallbackQuery, callback_data: AdminCallback):
 @router.callback_query(DriverCallback.filter(F.role == UserType.DRIVER))
 async def my_callback_foo(query: CallbackQuery, callback_data: DriverCallback):
     user = UserRes(telegram_id=query.from_user.id, last_name=query.from_user.first_name)
-    data = await driver_callback(query, callback_data, user, bot)
-    await send_message(query.message.chat.id, data, message_id=query.message.message_id)
+    if user.data().type == UserType.DRIVER:
+        data = await driver_callback(query, callback_data, user, bot)
+        await send_message(query.message.chat.id, data, message_id=query.message.message_id)
 
 
 async def send_message(chat_id: int, data: ReturnValue, message_id: int = None):

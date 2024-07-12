@@ -97,7 +97,7 @@ class UserRes:
     __stage: UserStage
 
     def __init__(self, telegram_id: int, last_name: str = None, username: str = None, user_type: int = None, chat_id: int = None):
-        self.__data = UserModel(telegram_id, last_name, username, user_type, chat_id=chat_id)
+        self.__data = UserModel(telegram_id=telegram_id, last_name=last_name, username=username, user_type=user_type, chat_id=chat_id)
         self.__stage = UserStage(telegram_id)
         self.__data.get(self.__stage.change_values)
 
