@@ -23,10 +23,10 @@ class GroupType:
 class Group:
     id: int or None
     name: str
-    telegram_id: int
+    telegram_id: str
     type: int
 
-    def __init__(self, name: str, telegram_id: int or str, type: int, id: int = None):
+    def __init__(self, name: str, telegram_id: str or str, type: int, id: int = None):
         self.id = id
         self.name = name
         self.telegram_id = telegram_id
@@ -105,7 +105,7 @@ class GroupRes:
             group_type = GroupType.SEND_MESSAGE
             if user.stage().step == UserStageEnum.GET_GROUP_CREATE_ID:
                 group_type = GroupType.GET_MESSAGE
-            return self.create(Group(telegram_id=int(id), name=user.stage().step_under, type=group_type))
+            return self.create(Group(telegram_id=id, name=user.stage().step_under, type=group_type))
         except:
             return False
 
@@ -120,7 +120,7 @@ class GroupRes:
         except:
             pass
 
-    def search(self, chat_id: int):
+    def search(self, chat_id: str):
         groups = self.group_list()
         for group in groups:
             if group['telegram_id'] == chat_id:
@@ -130,8 +130,8 @@ class GroupRes:
         MessageModel(message['message_id'], text=message['text'], client=message['user'].data(), create=True)
 
         await bot.delete_message(message_id=message['message_id'], chat_id=message['chat_id'])
-        await bot.send_message(chat_id=message['chat_id'], text=f"""
-            ✅ Xurmatli #{message['last_name']} sizning zakasingiz\n🚖 Haydovchilar guruhiga tushdi.\n💬 Lichkangizga ishonchli 🚕 shoferlarimiz aloqaga chiqadi.\n📞 Murojaat uchun tel: \n+998909994921\n💬 Admin: @bahico0312
+        await bot.send_message(chat_id=str(message['chat_id']), text=f"""
+            ✅ Xurmatli #{message['last_name']} sizning zakasingiz\n🚖 Haydovchilar guruhiga tushdi.\n💬 Lichkangizga ishonchli 🚕 shoferlarimiz aloqaga chiqadi.\n📞 Murojaat uchun tel: +998 93 979 09 91\n💬 Admin: @Sanjarbek772
         """)
 
         queue = InlineKeyboardButton(
@@ -145,11 +145,23 @@ class GroupRes:
         start_keyboard = InlineKeyboardMarkup(resize_keyboard=True, inline_keyboard=[[queue]])
         for group in self.group_list():
             if group['type'] == GroupType.SEND_MESSAGE:
-                send_message = await bot.send_message(
-                    text=f"Xabar: {message['text']}",
-                    parse_mode=ParseMode.HTML,
-                    chat_id=group['telegram_id'],
-                    reply_markup=start_keyboard
-                )
+                voice = None
+                print(message['file_id'], 'file_id')
+                if message['file_id']:
+                    voice = await bot.send_voice(chat_id=group['telegram_id'], voice=message['file_id'])
+                    send_message = await bot.send_message(
+                        reply_to_message_id=voice.message_id,
+                        text=f"Xabar: Ovozli habar",
+                        parse_mode=ParseMode.HTML,
+                        chat_id=group['telegram_id'],
+                        reply_markup=start_keyboard
+                    )
+                else:
+                    send_message = await bot.send_message(
+                        text=f"Xabar: {message['text']}",
+                        parse_mode=ParseMode.HTML,
+                        chat_id=group['telegram_id'],
+                        reply_markup=start_keyboard
+                    )
 
-                SendMessage(chat_id=group['telegram_id'], client_message_id=message['message_id'].__str__(), message_id=send_message.message_id, create=True)
+                SendMessage(chat_id=group['telegram_id'], client_message_id=message['message_id'].__str__(), message_id=send_message.message_id, voice=True if voice else False, create=True)

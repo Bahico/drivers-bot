@@ -13,5 +13,5 @@ def admin_message(message: types.Message, user: UserRes) -> ReturnValue:
         return group_name(message.text, user)
     elif user.stage().step == UserStageEnum.GET_GROUP_CREATE_ID or user.stage().step == UserStageEnum.SEND_GROUP_CREATE_ID:
         return group_id(message.text, user)
-    elif user.stage().step == UserStageEnum.MENU:
+    else:
         return admin_menu()

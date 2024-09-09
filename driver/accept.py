@@ -15,5 +15,5 @@ async def accept(callback_data: DriverCallback, bot: Bot):
     await edit_client_message(message, bot)
     return ReturnValue(
         edit_message=True,
-        message=f"{return_inside_message(message.client['telegram_id'], message.text)}\nRahmat!"
+        message=f"{return_inside_message(message.client['telegram_id'], text=message.text, last_name=message.client['last_name'])}\nRahmat!"
     )

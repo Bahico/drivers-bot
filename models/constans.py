@@ -1,5 +1,5 @@
 BOT_KEY = "7386046746:AAF-GDBIu-qUGf_KvT3Rfd6n6CvhF6V8On0"
-SERVER_URL = "http://0.0.0.0:8000/"
+SERVER_URL = "http://45.61.140.211:8000/"
 
 
 def getEndpoint(url: str) -> str:

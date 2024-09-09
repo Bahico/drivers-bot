@@ -11,3 +11,4 @@ class DriverCallbackType:
     TAKE_TURNS = "take turns"
     ACCEPT = "accept"
     CANCEL = 'cancel'
+    SEND_ADMIN = 'send-admin'

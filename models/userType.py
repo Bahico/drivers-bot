@@ -7,12 +7,14 @@ class UserType:
 class MessageTexts:
     ADMIN = "admin"
     PASSWORD = "1208"
+    DRIVER_PASSWORD = "1111"
     MENU = "menu"
 
 
 class UserStageEnum:
     START = "start"
     PASSWORD = "password"
+    DRIVER_PASSWORD = "driver_password"
     MENU = "menu"
     GET_GROUP_CREATE_NAME = "get_group_create_name"
     GET_GROUP_CREATE_ID = "get_group_create_id"

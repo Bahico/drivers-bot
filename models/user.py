@@ -14,7 +14,8 @@ class UserModel:
     last_name: str
     new = False
 
-    def __init__(self, telegram_id: int, last_name: str = None, username: str = None, user_type: str = None, chat_id: int = None):
+    def __init__(self, telegram_id: int, last_name: str = None, username: str = None, user_type: str = None,
+                 chat_id: int = None):
         self.telegram_id = telegram_id
         self.username = username
         self.type = user_type
@@ -31,7 +32,7 @@ class UserModel:
         }
 
     def get(self, call):
-        user = requests.post(f"{self.__resourceUrl__}{self.telegram_id.__str__()}/", json=self.user_data())
+        user = requests.post(f"{self.__resourceUrl__}detail/{self.telegram_id.__str__()}/", json=self.user_data())
         self.change_values(user.json())
         self.check_new(user)
         call()
@@ -53,8 +54,24 @@ class UserModel:
         self.type = type
         self.update()
 
+    def activation(self, data):
+        return requests.post(f"{self.__resourceUrl__}activation/", json=data)
+
+    def activation_key_generate(self):
+        return requests.get(f"{self.__resourceUrl__}activation/")
+
     def update(self):
-        requests.put(f"{self.__resourceUrl__}{self.telegram_id.__str__()}/", json=self.user_data())
+        requests.put(f"{self.__resourceUrl__}detail/{self.telegram_id.__str__()}/", json=self.user_data())
+
+    def users(self, user_type: int):
+        return requests.get(f"{self.__resourceUrl__}", params={"user_type": user_type}).json()
+
+    @staticmethod
+    def next_or_previous(url: str):
+        return requests.get(url).json()
+
+    def delete(self, user_id: int):
+        return requests.delete(f"{self.__resourceUrl__}delete/{str(user_id)}/").json()
 
 
 class UserStage:
@@ -96,8 +113,10 @@ class UserRes:
     __data: UserModel
     __stage: UserStage
 
-    def __init__(self, telegram_id: int, last_name: str = None, username: str = None, user_type: int = None, chat_id: int = None):
-        self.__data = UserModel(telegram_id=telegram_id, last_name=last_name, username=username, user_type=user_type, chat_id=chat_id)
+    def __init__(self, telegram_id: int, last_name: str = None, username: str = None, user_type: int = None,
+                 chat_id: int = None):
+        self.__data = UserModel(telegram_id=telegram_id, last_name=last_name, username=username, user_type=user_type,
+                                chat_id=chat_id)
         self.__stage = UserStage(telegram_id)
         self.__data.get(self.__stage.change_values)
 

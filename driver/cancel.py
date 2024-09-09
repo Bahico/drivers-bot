@@ -15,6 +15,7 @@ async def cancel(callback_data: DriverCallback, bot: Bot) -> ReturnValue:
 
     await edit_client_message(message, bot)
 
-    driver = UserRes(message.drivers[message.driver_order_index]['user']['telegram_id'])
+    if len(message.drivers) >= message.driver_order_index + 1:
+        driver = UserRes(message.drivers[message.driver_order_index]['user']['telegram_id'])
 
-    return ReturnValue(edit_message=True, callback_func=accept_or_cancel_message(user=driver.data(), message=message), message="Rahmat!")
+        return ReturnValue(edit_message=True, callback_func=accept_or_cancel_message(user=driver.data(), message=message), message="Rahmat!")
