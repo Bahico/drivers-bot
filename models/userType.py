@@ -7,7 +7,6 @@ class UserType:
 class MessageTexts:
     ADMIN = "admin"
     PASSWORD = "1208"
-    DRIVER_PASSWORD = "1111"
     MENU = "menu"
 
 

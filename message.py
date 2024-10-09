@@ -12,6 +12,10 @@ async def simple_message(message: types.Message, user: UserRes) -> ReturnValue:
     if user.data().type == UserType.SIMPLE:
         if user.stage().step == UserStageEnum.DRIVER_PASSWORD:
             await activation_driver(message, user)
+        else:
+            user.stage().step = UserStageEnum.DRIVER_PASSWORD
+            user.stage().update()
+            await message.reply("Parolni kiriting")
     elif user.data().type == UserType.DRIVER:
         if user.stage().step == UserStageEnum.PASSWORD:
             if message.text == MessageTexts.PASSWORD:
