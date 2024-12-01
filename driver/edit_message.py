@@ -6,11 +6,12 @@ from driver.driver_callback import DriverCallback, DriverCallbackType
 from models.message import MessageModel
 from models.send_message import SendMessage
 from models.userType import UserType
+from utils import mask_uzbek_phone_numbers
 
 
 async def edit_client_message(message: MessageModel, bot: Bot):
     send_message = SendMessage.ids(message.message_id)
-    drivers_text = f"""XABAR: {"Ovozli habar" if send_message[0]['voice'] else message.text}\n\n\nHaydovchi navbat🗓\n"""
+    drivers_text = f"""XABAR: {"Ovozli habar" if send_message[0]['voice'] else mask_uzbek_phone_numbers(message.text)}\n\n\nHaydovchi navbat🗓\n"""
 
     index = 0
     for driver in message.drivers:

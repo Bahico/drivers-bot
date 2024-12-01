@@ -13,6 +13,7 @@ from models.message import MessageModel
 from models.send_message import SendMessage
 from models.userType import UserStageEnum, UserType
 from models.user import UserRes
+from utils import mask_uzbek_phone_numbers
 
 
 class GroupType:
@@ -146,7 +147,6 @@ class GroupRes:
         for group in self.group_list():
             if group['type'] == GroupType.SEND_MESSAGE:
                 voice = None
-                print(message['file_id'], 'file_id')
                 if message['file_id']:
                     voice = await bot.send_voice(chat_id=group['telegram_id'], voice=message['file_id'])
                     send_message = await bot.send_message(
@@ -158,7 +158,7 @@ class GroupRes:
                     )
                 else:
                     send_message = await bot.send_message(
-                        text=f"Xabar: {message['text']}",
+                        text=f"Xabar: {mask_uzbek_phone_numbers(message['text'])}",
                         parse_mode=ParseMode.HTML,
                         chat_id=group['telegram_id'],
                         reply_markup=start_keyboard
