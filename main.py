@@ -36,8 +36,8 @@ async def send_id(message: types.Message) -> None:
             last_name=message.from_user.first_name, username=username
         )
         if user.data().is_new() or user.data().type == UserType.SIMPLE:
-            user.stage().step = UserStageEnum.DRIVER_PASSWORD
-            user.stage().update()
+            user.data().step = UserStageEnum.DRIVER_PASSWORD
+            user.data().change_step()
             await message.reply("Parolni kiriting")
         else:
             await message.reply("Siz haydovchilar ro'yxatida borsiz")
@@ -67,21 +67,21 @@ async def message(message: types.Message) -> None:
         await send_message(message.from_user.id, data)
 
 
-@router.callback_query(AdminCallback.filter(F.role == UserType.ADMIN))
+@router.callback_query(AdminCallback.filter(UserType.ADMIN == F.role))
 async def my_callback_foo(query: CallbackQuery, callback_data: AdminCallback):
     user = UserRes(telegram_id=query.from_user.id, last_name=query.from_user.first_name)
     data = admin_callback(query, callback_data, user)
     await send_message(query.message.chat.id, data, message_id=query.message.message_id)
 
 
-@router.callback_query(DriverDeleteCallback.filter(F.role == UserType.ADMIN))
+@router.callback_query(DriverDeleteCallback.filter(UserType.ADMIN == F.role))
 async def my_callback_foo(query: CallbackQuery, callback_data: DriverDeleteCallback):
     user = UserRes(telegram_id=query.from_user.id, last_name=query.from_user.first_name)
     data = driver_delete(callback_data=callback_data, user=user.data())
     await send_message(query.message.chat.id, data, message_id=query.message.message_id)
 
 
-@router.callback_query(DriverCallback.filter(F.role == UserType.DRIVER))
+@router.callback_query(DriverCallback.filter(UserType.DRIVER == F.role))
 async def my_callback_foo(query: CallbackQuery, callback_data: DriverCallback):
     user = UserRes(telegram_id=query.from_user.id, last_name=query.from_user.first_name)
     if user.data().type == UserType.DRIVER or user.data().type == UserType.ADMIN:

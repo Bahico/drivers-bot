@@ -9,13 +9,14 @@ from models.userType import UserType
 def drivers_list(
         user: UserModel,
         callback_data: AdminCallback or DriverDeleteCallback,
-        edit_message=True
+        edit_message=True,
+        page=None
 ) -> ReturnValue:
-    if len(callback_data.id) > 0:
+    if page is None and len(callback_data.id) > 0:
         drivers = user.next_or_previous(url=callback_data.id)
     else:
         drivers = user.users(user_type=UserType.DRIVER)
-
+    print(drivers, 'drivers')
     drivers_button = []
     drivers_text = f"Haydovchilar soni: {str(drivers['count'])}\nHozirgi sahifa: {str(drivers['current_page'])}\n\n"
     index = 0

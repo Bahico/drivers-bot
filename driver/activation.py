@@ -11,8 +11,8 @@ async def activation_driver(message: Message, user: UserRes):
     }).json()
 
     if activation['success']:
-        user.stage().step = UserStageEnum.START
-        user.stage().update()
+        user.data().step = UserStageEnum.START
+        user.data().change_step()
         await message.reply("Siz haydovchilar ro'yxatiga qo'shildingiz")
     else:
         await message.reply("Iltimos to'g'ri parol kiriting")

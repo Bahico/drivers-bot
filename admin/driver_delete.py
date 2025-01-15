@@ -12,4 +12,4 @@ def driver_delete(callback_data: DriverDeleteCallback, user: UserModel):
     return ReturnValue(
         message=f"O'chirilgan haydovchi: {deleted_user['last_name']} {'@' + deleted_user['username'] if deleted_user['username'] else ''}",
         remove_message=True,
-        callback_func=drivers_list(user=user, callback_data=callback_data, edit_message=False))
+        callback_func=drivers_list(user=user, callback_data=callback_data, edit_message=False, page=0))

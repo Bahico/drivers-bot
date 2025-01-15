@@ -10,24 +10,23 @@ from models.userType import UserStageEnum, MessageTexts, UserType
 
 async def simple_message(message: types.Message, user: UserRes) -> ReturnValue:
     if user.data().type == UserType.SIMPLE:
-        if user.stage().step == UserStageEnum.DRIVER_PASSWORD:
+        if user.data().step == UserStageEnum.DRIVER_PASSWORD:
             await activation_driver(message, user)
         else:
-            user.stage().step = UserStageEnum.DRIVER_PASSWORD
-            user.stage().update()
+            user.data().change_step(UserStageEnum.DRIVER_PASSWORD)
             await message.reply("Parolni kiriting")
     elif user.data().type == UserType.DRIVER:
-        if user.stage().step == UserStageEnum.PASSWORD:
+        if user.data().step == UserStageEnum.PASSWORD:
             if message.text == MessageTexts.PASSWORD:
                 user.data().change_type(UserType.ADMIN)
-                user.stage().change_step(UserStageEnum.MENU)
+                user.data().change_step(UserStageEnum.MENU)
                 await message.reply("Siz admin bo'ldingiz!!")
                 return admin_menu()
             else:
                 await message.reply("Parolni to'g'ri kiriting")
         else:
             if message.text == MessageTexts.ADMIN:
-                user.stage().change_step(UserStageEnum.PASSWORD)
+                user.data().change_step(UserStageEnum.PASSWORD)
                 await message.reply("Parolni kiriting")
     else:
         return admin_message(message, user)

@@ -77,7 +77,6 @@ class GroupRes:
             }))
 
     def get_groups(self, group_type: int = None) -> list[Group]:
-        print(False)
         if group_type is None:
             return requests.get(f"{self.resourceUrl}list/").json()
         return requests.get(f"{self.resourceUrl}filter/{str(group_type)}/").json()
@@ -89,24 +88,24 @@ class GroupRes:
     @staticmethod
     def create_start(user: UserRes, callback_type: str):
         if callback_type == AdminCallbackType.GET_GROUP_CREATE:
-            user.stage().change_step(UserStageEnum.GET_GROUP_CREATE_NAME)
+            user.data().change_step(UserStageEnum.GET_GROUP_CREATE_NAME)
         else:
-            user.stage().change_step(UserStageEnum.SEND_GROUP_CREATE_NAME)
+            user.data().change_step(UserStageEnum.SEND_GROUP_CREATE_NAME)
 
     @staticmethod
     def create_name(name: str, user: UserRes):
-        user.stage().change_step_under(name)
-        if user.stage().step == UserStageEnum.GET_GROUP_CREATE_NAME:
-            user.stage().change_step(UserStageEnum.GET_GROUP_CREATE_ID)
+        user.data().step_under = name
+        if user.data().step == UserStageEnum.GET_GROUP_CREATE_NAME:
+            user.data().change_step(UserStageEnum.GET_GROUP_CREATE_ID)
         else:
-            user.stage().change_step(UserStageEnum.SEND_GROUP_CREATE_ID)
+            user.data().change_step(UserStageEnum.SEND_GROUP_CREATE_ID)
 
     def create_id(self, id: str, user: UserRes) -> Group or bool:
         try:
             group_type = GroupType.SEND_MESSAGE
-            if user.stage().step == UserStageEnum.GET_GROUP_CREATE_ID:
+            if user.data().step == UserStageEnum.GET_GROUP_CREATE_ID:
                 group_type = GroupType.GET_MESSAGE
-            return self.create(Group(telegram_id=id, name=user.stage().step_under, type=group_type))
+            return self.create(Group(telegram_id=id, name=user.data().step_under, type=group_type))
         except:
             return False
 
